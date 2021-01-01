@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from utils import MetricTracker
 
-CUR_DIR = os.getcwd()
+CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # branched from https://raw.githubusercontent.com/victoresque/pytorch-template/master/base/base_trainer.py
 
@@ -55,10 +55,11 @@ class BaseTrainer:
 
         self.start_epoch = 1
 
-        self.checkpoint_dir = os.path.join(CUR_DIR + "/../", cfg_trainer["save_dir"])
+        self.checkpoint_dir = os.path.join(os.path.dirname(CUR_DIR), cfg_trainer["save_dir"])
+        self.logger.info(f'Saving checkpoint to {self.checkpoint_dir}')
 
         # setup visualization writer instance                
-        self.writer = SummaryWriter(os.path.join("{}/../{}".format(CUR_DIR, config["tb_dir"]), "{}_{}".format(config["name"], config["dataset"]["args"]["n_samples"])))
+        self.writer = SummaryWriter(os.path.join("{}/{}".format(os.path.dirname(CUR_DIR), config["tb_dir"]), "{}_{}".format(config["name"], config["dataset"]["args"]["n_samples"])))
 
         self.train_metrics = MetricTracker('loss', *[m.__name__ for m in self.metric_ftns], writer = self.writer)
         self.val_metrics = MetricTracker('loss', *[m.__name__ for m in self.metric_ftns], writer = self.writer)

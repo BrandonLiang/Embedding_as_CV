@@ -6,7 +6,7 @@ from base_trainer import BaseTrainer
 from visualize import visualize
 import metrics
 
-CUR_DIR = os.getcwd()
+CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 
 def MLM_load_batch(batch, config):
   original_labels, masked_labels, masked_token_ids, masked_indices = batch
@@ -22,7 +22,7 @@ class MLMTrainer(BaseTrainer):
     super().__init__(dataloders, model, criterion, metric_ftns, optimizer, logger, config, lr_scheduler = None)
     with torch.no_grad():
       # visualize embedding for a sample word by BERT before training and save as image
-      visualize(self.model.bert, epoch = 0, location = CUR_DIR + "/../image")
+      visualize(self.model.bert, epoch = 0, location = os.path.dirname(CUR_DIR) + "/image")
 
   def _train_epoch(self, epoch):
     """
@@ -72,7 +72,7 @@ class MLMTrainer(BaseTrainer):
 
     with torch.no_grad():
       # visualize embedding for a sample word by BERT as of this epoch and save as image
-      visualize(self.model.bert, epoch = epoch, location = CUR_DIR + "/../image")
+      visualize(self.model.bert, epoch = epoch, location = os.path.dirname(CUR_DIR) + "/image")
 
     if self.lr_scheduler is not None:
       self.lr_scheduler.step()

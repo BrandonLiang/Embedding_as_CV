@@ -8,7 +8,7 @@ from tqdm import tqdm
 import copy
 import os
 
-CUR_DIR = os.getcwd()
+CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # branched from https://github.com/BrandonLiang/DVMM/blob/master/vcr_label_transformer_and_kmeans/python/dataset.py
 
@@ -16,7 +16,7 @@ random.seed(10)
 
 class ReviewsDataset(Dataset):
 
-  def __init__(self, logger, path = "{}/../data/Reviews.csv".format(CUR_DIR), delimiter = ',', text_field = "Text", max_length = 128, n_samples = -1):
+  def __init__(self, logger, path = "{}/data/Reviews.csv".format(os.path.dirname(CUR_DIR)), delimiter = ',', text_field = "Text", max_length = 128, n_samples = -1):
     df = pd.read_csv(path, delimiter = delimiter)
     if n_samples > 0:
         df = df.head(n_samples)
