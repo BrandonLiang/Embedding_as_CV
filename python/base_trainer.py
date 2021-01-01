@@ -47,7 +47,7 @@ class BaseTrainer:
 
         self.start_epoch = 1
 
-        self.checkpoint_dir = config.save_dir
+        self.checkpoint_dir = os.path.join(CUR_DIR + "/../", config.save_dir)
 
         # setup visualization writer instance                
         self.writer = SummaryWriter(os.path.join("{}/../{}".format(CUR_DIR, config.tb_dir), "{}_{}".format(config.name, config.dataset["args"]["n_samples"])))
