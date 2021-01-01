@@ -4,6 +4,7 @@ import os
 
 from base_trainer import BaseTrainer
 from visualize import visualize
+import metrics
 
 CUR_DIR = os.getcwd()
 
@@ -39,7 +40,7 @@ class MLMTrainer(BaseTrainer):
       self.optimizer.zero_grad()
 
       # https://discuss.pytorch.org/t/selecting-element-on-dimension-from-list-of-indexes/36319/2
-      yhat = model(masked_labels) # (actual_batch_size, seq_length, vocab_size)
+      yhat = self.model(masked_labels) # (actual_batch_size, seq_length, vocab_size)
       yhat = yhat[torch.arange(actual_batch_size), masked_indices] # (actual_batch_size, vocab_size)
       
       loss = self.criterion(yhat, masked_token_ids)
@@ -55,7 +56,7 @@ class MLMTrainer(BaseTrainer):
       if batch_idx % self.log_step == 0:
         self.logger.info('Train Epoch: {}-{} Loss: {:.6f}'.format(
           epoch,
-          slef._progress(batch_idx),
+          self._progress(batch_idx, self.train_loader),
           loss.item()))
 
       loss.backward()
@@ -92,11 +93,11 @@ class MLMTrainer(BaseTrainer):
         actual_batch_size = original_labels.shape[0]
 
         # https://discuss.pytorch.org/t/selecting-element-on-dimension-from-list-of-indexes/36319/2
-        yhat = model(masked_labels) # (actual_batch_size, seq_length, vocab_size)
+        yhat = self.model(masked_labels) # (actual_batch_size, seq_length, vocab_size)
         yhat = yhat[torch.arange(actual_batch_size), masked_indices] # (actual_batch_size, vocab_size)
 
         loss = self.criterion(yhat, masked_token_ids)
-        writer.add_scalar("Loss/val", loss, slef.val_iter_global)
+        writer.add_scalar("Loss/val", loss, self.val_iter_global)
         acc = metrics.accuracy(yhat, masked_token_ids)
         self.writer.add_scalar("Accuracy/val", acc * 1.0 / actual_batch_size, self.val_iter_global)
         self.val_iter_global += 1
@@ -108,18 +109,19 @@ class MLMTrainer(BaseTrainer):
         if batch_idx % self.log_step == 0:
           self.logger.info('Val Epoch: {}-{} Loss: {:.6f}'.format(
             epoch,
-            slef._progress(batch_idx),
+            self._progress(batch_idx, self.val_loader),
             loss.item()))
 
     return self.val_metrics.result()
 
 
-  def _progress(self, batch_idx):
+  def _progress(self, batch_idx, dataloader):
     base = '[{}/{} ({:.0f}%)]'
-    if hasattr(self.data_loader, 'n_samples'):
-        current = batch_idx * self.data_loader.batch_size
-        total = self.data_loader.n_samples
+    if hasattr(dataloader, 'n_samples'):
+        current = batch_idx * dataloader.batch_size
+        total = dataloader.n_samples
     else:
         current = batch_idx
-        total = self.len_epoch
+        #total = self.len_epoch
+        total = len(dataloader)
     return base.format(current, total, 100.0 * current / total)

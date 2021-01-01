@@ -26,9 +26,9 @@ def main(config):
   random.seed(SEED)
 
   # verify that current logger level is INFO (1), not DEBUG (2) or WARNING (0)
-  logger.debug(f'DEBUG')
-  logger.info(f'Using {SEED} as seed')
-  logger.warning(f'WARNING')
+  #logger.debug(f'DEBUG')
+  #logger.info(f'Using {SEED} as seed')
+  #logger.warning(f'WARNING')
 
   # obj - use config.init_obj
   model = config.init_obj('model', model_module)

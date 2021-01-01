@@ -2,3 +2,4 @@ data
 log
 tb_log
 checkpoint
+**/__pycache__

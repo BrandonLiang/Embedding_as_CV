@@ -3,6 +3,7 @@ from abc import abstractmethod
 from numpy import inf
 from torch.utils.tensorboard import SummaryWriter
 import os
+from tqdm import tqdm
 
 from utils import MetricTracker
 
@@ -21,6 +22,13 @@ class BaseTrainer:
 
         self.train_loader, self.val_loader = dataloaders
         self.model = model
+        if self.config["use_gpu"]:
+          self.model = self.model.cuda(self.config["main_gpu"])
+          self.logger.info(f'Using {self.config["main_gpu"]} as the main GPU')
+          # also need to handle Distributed GPU training
+          # self.logger.info(f'Using GPU ids {} for distributed training')
+        else:
+          self.logger.info("Running Everything on CPU")
         self.criterion = criterion
         self.metric_ftns = metric_ftns
         self.optimizer = optimizer
@@ -47,10 +55,10 @@ class BaseTrainer:
 
         self.start_epoch = 1
 
-        self.checkpoint_dir = os.path.join(CUR_DIR + "/../", config.save_dir)
+        self.checkpoint_dir = os.path.join(CUR_DIR + "/../", cfg_trainer["save_dir"])
 
         # setup visualization writer instance                
-        self.writer = SummaryWriter(os.path.join("{}/../{}".format(CUR_DIR, config.tb_dir), "{}_{}".format(config.name, config.dataset["args"]["n_samples"])))
+        self.writer = SummaryWriter(os.path.join("{}/../{}".format(CUR_DIR, config["tb_dir"]), "{}_{}".format(config["name"], config["dataset"]["args"]["n_samples"])))
 
         self.train_metrics = MetricTracker('loss', *[m.__name__ for m in self.metric_ftns], writer = self.writer)
         self.val_metrics = MetricTracker('loss', *[m.__name__ for m in self.metric_ftns], writer = self.writer)
@@ -76,7 +84,7 @@ class BaseTrainer:
         Full training logic
         """
         not_improved_count = 0
-        for epoch in range(self.start_epoch, self.epochs + 1):
+        for epoch in tqdm(range(self.start_epoch, self.epochs + 1)):
             result = self._train_epoch(epoch)
 
             # save logged informations into log dict

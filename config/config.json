@@ -16,7 +16,7 @@
     "dataset": {
         "type": "ReviewsDataset",
         "args":{
-            "n_samples": 10000
+            "n_samples": 1000
         }
     },
     "dataloader": {
@@ -30,7 +30,7 @@
     "optimizer": {
         "type": "SGD",
         "args":{
-            "lr": 1e-3,
+            "lr": 1e-2,
             "weight_decay": 0
         }
     },
