@@ -14,7 +14,7 @@
         "args": {}
     },
     "dataset": {
-        "type": "ReviewsDataset",
+        "type": "MLMDataset",
         "args":{
             "n_samples": 1000
         }

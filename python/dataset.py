@@ -14,7 +14,7 @@ CUR_DIR = os.path.dirname(os.path.realpath(__file__))
 
 random.seed(10)
 
-class ReviewsDataset(Dataset):
+class MLMDataset(Dataset):
 
   def __init__(self, logger, path = "{}/data/Reviews.csv".format(os.path.dirname(CUR_DIR)), delimiter = ',', text_field = "Text", max_length = 128, n_samples = -1):
     df = pd.read_csv(path, delimiter = delimiter)
