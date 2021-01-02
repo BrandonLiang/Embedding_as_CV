@@ -64,7 +64,7 @@ class MLMTrainer(BaseTrainer):
 
     log = self.train_metrics.result()
 
-    if self.config.do_validation:
+    if self.config["do_validation"]:
       val_log = self._val_epoch(epoch)
       log.update(**{'val_'+k : v for k, v in val_log.items()})
 
@@ -97,7 +97,7 @@ class MLMTrainer(BaseTrainer):
         yhat = yhat[torch.arange(actual_batch_size), masked_indices] # (actual_batch_size, vocab_size)
 
         loss = self.criterion(yhat, masked_token_ids)
-        writer.add_scalar("Loss/val", loss, self.val_iter_global)
+        self.writer.add_scalar("Loss/val", loss, self.val_iter_global)
         acc = metrics.accuracy(yhat, masked_token_ids)
         self.writer.add_scalar("Accuracy/val", acc * 1.0 / actual_batch_size, self.val_iter_global)
         self.val_iter_global += 1
