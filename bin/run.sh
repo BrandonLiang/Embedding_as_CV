@@ -14,3 +14,4 @@ BIN_DIR=$APP_HOME/bin
 
 python $PYTHON_DIR/run.py \
   -c $CONFIG_DIR/config.json
+  -r $APP_HOME/checkpoint
