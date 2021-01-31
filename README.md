@@ -6,3 +6,4 @@ This project uses [PyTorch Template](https://github.com/victoresque/pytorch-temp
 
 ## To Do
 1. Fix save-best in python/base\_trainer.py like in [this tutorial](https://blog.floydhub.com/long-short-term-memory-from-zero-to-hero-with-pytorch/)
+2. create directory based on run/model name in config/<config.json> to store all artifacts: log, tensorboard log, model checkpoint, etc.
